@@ -1,0 +1,11 @@
+.venv
+frontend
+presentation
+docs
+tests
+deploy
+data
+.git
+__pycache__
+*.pyc
+.env

@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+psycopg[binary]
+sqlglot
+pandas
+numpy
+python-dotenv
+langdetect
+httpx
+argopy
+erddapy>=2.2.1,<3
+xarray
+netCDF4
+h5netcdf
+gsw
+pytest

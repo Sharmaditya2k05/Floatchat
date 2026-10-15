@@ -1,0 +1,536 @@
+<title>FloatChat Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --abyss:#04101c; --deep:#082033; --panel:rgba(12,32,50,.62); --panel-2:rgba(16,40,60,.5);
+    --line:rgba(120,170,205,.18); --line-2:rgba(120,170,205,.32);
+    --ink:#eaf5fb; --ink-dim:#a9c2d6; --ink-faint:#6f8ba3;
+    --seafoam:#38e3c6; --seafoam-deep:#1aa891; --amber:#f6bb52; --blue:#79b6ff;
+    --shadow:0 24px 70px -30px rgba(0,0,0,.8);
+    --disp:"Bricolage Grotesque",serif; --body:"Public Sans",system-ui,sans-serif; --mono:"JetBrains Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(1200px 700px at 70% -12%, rgba(56,227,198,.10), transparent 60%),
+      radial-gradient(900px 600px at 12% 8%, rgba(121,182,255,.08), transparent 55%),
+      linear-gradient(180deg,#071a2b 0%, var(--abyss) 70%);
+    color:var(--ink); font-family:var(--body); overflow:hidden; -webkit-font-smoothing:antialiased;
+  }
+  .deck{position:relative;height:100vh;width:100vw;overflow:hidden}
+  .slide{position:absolute;inset:0;display:grid;place-items:center;padding:clamp(24px,4.4vw,64px);
+    opacity:0;visibility:hidden;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease,visibility .5s;overflow:auto}
+  .slide.active{opacity:1;visibility:visible;transform:none}
+  .wrap{width:min(1120px,100%);}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--seafoam);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--seafoam);opacity:.7}
+  h1{font-family:var(--disp);font-weight:800;font-size:clamp(40px,7vw,92px);line-height:.98;letter-spacing:-.02em;text-wrap:balance}
+  h2{font-family:var(--disp);font-weight:700;font-size:clamp(27px,4vw,50px);line-height:1.03;letter-spacing:-.02em;text-wrap:balance}
+  .lead{font-size:clamp(15px,1.6vw,20px);color:var(--ink-dim);line-height:1.5;max-width:62ch;margin-top:14px}
+  .note{font-size:13.5px;color:var(--ink-faint);line-height:1.55;max-width:70ch;margin-top:18px}
+  .note code{color:var(--seafoam)} .note b{color:var(--ink-dim)}
+  ul{list-style:none;display:flex;flex-direction:column;gap:12px;margin-top:24px}
+  li{display:flex;gap:13px;align-items:flex-start;font-size:clamp(14px,1.45vw,17.5px);line-height:1.4}
+  li .m{flex:0 0 auto;margin-top:.3em;width:8px;height:8px;border-radius:2px;background:var(--seafoam);transform:rotate(45deg);box-shadow:0 0 0 4px rgba(56,227,198,.12)}
+  li .m.a{background:var(--amber);box-shadow:0 0 0 4px rgba(246,187,82,.12)}
+  li .m.b{background:var(--blue);box-shadow:0 0 0 4px rgba(121,182,255,.12)}
+  li b{color:var(--ink);font-weight:600}
+  li span.t{color:var(--ink-dim)}
+  .grid2{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(24px,3.4vw,52px);align-items:center}
+  @media(max-width:860px){.grid2{grid-template-columns:1fr;gap:22px}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;backdrop-filter:blur(8px)}
+  .stat{font-family:var(--disp);font-weight:800;font-size:clamp(26px,3.6vw,46px);line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+  .stat .u{font-family:var(--body);font-weight:600;font-size:.36em;color:var(--seafoam);margin-left:.35em;letter-spacing:.02em}
+  .statlbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-top:9px}
+  .statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media(max-width:860px){.statgrid{grid-template-columns:repeat(2,1fr)}}
+  .stripe{display:flex;gap:26px;margin-top:26px;flex-wrap:wrap}
+  .stripe .s{display:flex;flex-direction:column}
+  .stripe .s .v{font-family:var(--disp);font-weight:800;font-size:clamp(20px,2.4vw,30px);color:var(--ink);font-variant-numeric:tabular-nums}
+  .stripe .s .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--seafoam);margin-top:4px}
+  .photo{border-radius:18px;overflow:hidden;border:1px solid var(--line-2);box-shadow:var(--shadow);position:relative;aspect-ratio:16/10}
+  .photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}
+  .chip{font-family:var(--mono);font-size:12.5px;padding:7px 12px;border-radius:999px;border:1px solid var(--line-2);color:var(--ink-dim);background:var(--panel-2)}
+  .chip b{color:var(--seafoam);font-weight:500}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:9px 18px;margin-top:22px;font-size:15px}
+  .kv dt{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);padding-top:2px}
+  .kv dd{color:var(--ink-dim)}
+  code{font-family:var(--mono);color:var(--seafoam);font-size:.92em}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}
+  @media(max-width:860px){.two{grid-template-columns:1fr}}
+  .fam{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .fam h3{font-family:var(--disp);font-weight:700;font-size:16px;color:var(--ink);display:flex;align-items:center;gap:9px}
+  .fam h3 .n{font-family:var(--mono);font-size:11px;color:var(--amber);border:1px solid var(--line-2);border-radius:6px;padding:2px 6px}
+  .fam p{font-size:13px;color:var(--ink-dim);margin-top:7px;line-height:1.4}
+  .fam .q{font-size:12.5px;color:var(--seafoam);margin-top:8px;font-style:italic}
+  /* hero */
+  .hero{position:relative;height:100%;width:100%;display:grid;place-items:center;text-align:center}
+  .hero .bg{position:absolute;inset:0}
+  .hero .bg img{width:100%;height:100%;object-fit:cover}
+  .hero .scrim{position:absolute;inset:0;background:
+     radial-gradient(120% 90% at 50% 42%, transparent 18%, rgba(4,16,28,.55) 68%, rgba(4,16,28,.92) 100%),
+     linear-gradient(180deg, rgba(4,16,28,.35), rgba(4,16,28,.72))}
+  .hero .inner{position:relative;max-width:900px;padding:20px}
+  .logo{width:62px;height:62px;border-radius:18px;display:grid;place-items:center;margin:0 auto 22px;
+    background:linear-gradient(150deg,#0d3346,#0a1f30);border:1px solid var(--line-2);box-shadow:var(--shadow)}
+  .tag{margin-top:18px;font-size:clamp(15px,1.9vw,21px);color:var(--ink-dim);text-wrap:balance;max-width:44ch;margin-left:auto;margin-right:auto}
+  .credit{margin-top:28px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint)}
+  .flow{width:100%;margin-top:6px;overflow-x:auto}
+  .flow svg{width:100%;min-width:760px;height:auto;display:block}
+  /* inside-the-brain animation */
+  .bv{margin-top:14px}
+  .bv-track{position:relative;display:grid;grid-template-columns:repeat(6,1fr);gap:9px;padding-top:8px}
+  .bv-stage{border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center;background:rgba(12,32,50,.5);transition:all .35s ease}
+  .bv-stage .num{font-family:var(--mono);font-size:11px;color:var(--seafoam);opacity:.65}
+  .bv-stage .nm{font-family:var(--disp);font-weight:700;font-size:15px;color:var(--ink);margin-top:1px}
+  .bv-stage small{display:block;font-family:var(--mono);font-size:10px;color:var(--ink-faint);margin-top:3px}
+  .bv-stage.done{border-color:rgba(56,227,198,.35)}
+  .bv-stage.on{border-color:var(--seafoam);background:rgba(56,227,198,.10);box-shadow:0 0 0 1px rgba(56,227,198,.25),0 12px 32px -14px rgba(56,227,198,.45);transform:translateY(-2px)}
+  .bv-dot{position:absolute;top:0;left:0;width:12px;height:12px;border-radius:50%;background:var(--amber);box-shadow:0 0 12px 3px rgba(246,187,82,.6);transition:left .6s cubic-bezier(.5,0,.2,1);z-index:3}
+  .bv-cap{margin-top:18px;font-size:15.5px;color:var(--ink);min-height:46px;line-height:1.45}
+  .bv-cap b{color:var(--seafoam)}
+  .bv-detail{margin-top:12px;min-height:132px}
+  .bv-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .bv-chip{font-family:var(--mono);font-size:11.5px;padding:6px 11px;border-radius:8px;border:1px solid var(--line-2);background:var(--panel-2);color:var(--ink-dim);opacity:0;transform:translateY(6px);transition:all .3s ease}
+  .bv-chip.in{opacity:1;transform:none}
+  .bv-chip b{color:var(--amber);font-weight:500}
+  .bv-pre{font-family:var(--mono);font-size:13px;line-height:1.75;color:#8fe9d6;white-space:pre-wrap;background:rgba(8,24,40,.55);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-height:120px}
+  .bv-cursor{display:inline-block;width:7px;height:1.05em;background:var(--seafoam);vertical-align:-2px;animation:bv-blink 1s steps(1) infinite}
+  @keyframes bv-blink{50%{opacity:0}}
+  .bv-checks{display:flex;flex-direction:column;gap:10px}
+  .bv-check{display:flex;align-items:center;gap:10px;font-size:14.5px;color:var(--ink-dim);opacity:0;transform:translateX(-6px);transition:all .3s ease}
+  .bv-check.in{opacity:1;transform:none}
+  .bv-check .ok{color:var(--seafoam);font-weight:800}
+  .bv-rows{display:flex;flex-direction:column;gap:7px;font-family:var(--mono);font-size:12.5px;color:var(--ink-dim)}
+  .bv-rows .r{opacity:0;transform:translateY(4px);transition:all .28s ease}
+  .bv-rows .r.in{opacity:1;transform:none}
+  .bv-ans{font-family:var(--body);font-size:15px;color:var(--ink);margin-top:8px}
+  .bv-ans b{color:var(--seafoam)}
+  .bv-fade{opacity:0;transform:translateY(5px);transition:all .32s ease}
+  .bv-fade.in{opacity:1;transform:none}
+  .bv-result{border:1px solid var(--line-2);border-radius:14px;padding:16px 18px;background:rgba(12,32,50,.5)}
+  .bv-q{font-size:13.5px;color:var(--ink-faint);font-style:italic}
+  .bv-a{margin-top:9px;font-size:18px;color:var(--ink);line-height:1.4}
+  .bv-a b{color:var(--seafoam)}
+  .bv-outs{display:flex;gap:9px;margin-top:15px;flex-wrap:wrap}
+  .bv-outs .o{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;padding:7px 12px;border-radius:9px;border:1px solid var(--line-2);background:var(--panel-2);color:var(--ink-dim)}
+  .bv-outs .o svg{width:14px;height:14px}
+  .bv-outs .o.map{color:var(--amber)} .bv-outs .o.chart{color:var(--blue)} .bv-outs .o.sql{color:var(--seafoam)}
+  .bv-ctrls{display:flex;align-items:center;gap:11px;margin-top:20px}
+  .bv-btn{height:38px;min-width:38px;border-radius:11px;border:1px solid var(--line-2);background:var(--panel);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:var(--mono);font-size:13px;transition:all .13s ease}
+  .bv-btn:hover{border-color:var(--seafoam);color:var(--seafoam)}
+  .bv-btn:disabled{opacity:.32;cursor:default;border-color:var(--line-2);color:var(--ink)}
+  .bv-btn.play{padding:0 16px}
+  .bv-step{font-family:var(--mono);font-size:12px;color:var(--ink-faint);margin-left:4px}
+  .bv-step b{color:var(--ink)}
+  .rail{position:fixed;left:0;right:0;top:0;height:3px;background:rgba(120,170,205,.12);z-index:40}
+  .rail>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--seafoam),var(--blue));transition:width .5s ease}
+  .nav{position:fixed;bottom:20px;right:24px;display:flex;align-items:center;gap:14px;z-index:40}
+  .dots{display:flex;gap:6px}
+  .dot{width:8px;height:8px;border-radius:999px;background:rgba(150,190,215,.25);border:0;cursor:pointer;padding:0;transition:transform .2s,background .2s}
+  .dot.on{background:var(--seafoam);transform:scale(1.3)}
+  .arw{width:34px;height:34px;border-radius:10px;border:1px solid var(--line-2);background:var(--panel);color:var(--ink);cursor:pointer;display:grid;place-items:center;backdrop-filter:blur(6px)}
+  .arw:disabled{opacity:.35;cursor:default}
+  .arw:focus-visible,.dot:focus-visible{outline:2px solid var(--seafoam);outline-offset:3px}
+  .count{position:fixed;bottom:24px;left:24px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--ink-faint);z-index:40}
+  .count b{color:var(--ink)}
+  .hint{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);z-index:40;transition:opacity .4s}
+  @media (prefers-reduced-motion:reduce){.slide{transition:opacity .2s}}
+  @media(max-width:860px){.hint{display:none}}
+</style>
+
+<div class="rail"><i id="bar"></i></div>
+<div class="deck" id="deck">
+
+  <!-- 1 · HERO -->
+  <section class="slide">
+    <div class="hero">
+      <div class="bg"><img src="{{HERO}}" alt="Sea turtle over a coral reef in sunlit blue water"></div>
+      <div class="scrim"></div>
+      <div class="inner">
+        <div class="logo">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+            <path d="M4 5.5h13a2.5 2.5 0 0 1 2.5 2.5v5a2.5 2.5 0 0 1-2.5 2.5H10l-3.5 3v-3H4a2.5 2.5 0 0 1-2.5-2.5V8A2.5 2.5 0 0 1 4 5.5z" stroke="#38e3c6" stroke-width="1.5"/>
+            <path d="M5.5 11.2q2-2.4 4 0t4 0" stroke="#38e3c6" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="5.5" cy="11.2" r="1.15" fill="#f6bb52"/>
+          </svg>
+        </div>
+        <h1>FloatChat</h1>
+        <p class="tag">Ask the ocean a question in plain language — get a grounded answer, a live float map, and the exact data behind it.</p>
+        <div class="stripe" style="justify-content:center;margin-top:26px">
+          <div class="s"><span class="v">12,442</span><span class="l">profiles</span></div>
+          <div class="s"><span class="v">7.9M</span><span class="l">measurements</span></div>
+          <div class="s"><span class="v">5</span><span class="l">languages</span></div>
+          <div class="s"><span class="v">100%</span><span class="l">grounded</span></div>
+          <div class="s"><span class="v">PFZ</span><span class="l">fisheries</span></div>
+        </div>
+        <p class="credit">ANALYTICA 2026 · PS26-033 · MoES / INCOIS</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · PROBLEM -->
+  <section class="slide">
+    <div class="wrap">
+      <div class="eyebrow">The problem</div>
+      <h2>The ocean is measured. The data is public. Almost no one can use it.</h2>
+      <div class="grid2" style="margin-top:22px">
+        <ul style="margin-top:0">
+          <li><i class="m a"></i><span class="t"><b>ARGO</b> — ~4,000 robotic floats have measured the ocean since 2000, adding <b>100,000+ profiles a year</b> (3M+ total).</span></li>
+          <li><i class="m a"></i><span class="t">India's <b>MoES / INCOIS</b> both contribute floats and depend on this data for forecasts, fisheries, and climate. <b>4M+ fishermen</b> need the same data but can't access it.</span></li>
+          <li><i class="m a"></i><span class="t">But it ships as <b>NetCDF</b> — domain-specific files opened only through specialist tools and query knowledge.</span></li>
+          <li><i class="m a"></i><span class="t">In practice a handful of trained scientists can use it. Everyone else is locked out.</span></li>
+        </ul>
+        <div class="card">
+          <div style="font-family:var(--mono);font-size:11px;color:var(--ink-faint);letter-spacing:.1em;text-transform:uppercase">The barrier</div>
+          <p style="margin-top:12px;font-size:15px;color:var(--ink-dim);line-height:1.5">A researcher today needs to know the NetCDF conventions, QC-flag rules, delayed-mode vs real-time modes, pressure-vs-depth, and how to write the extraction code — <b style="color:var(--ink)">before</b> they can answer a single question.</p>
+          <p style="margin-top:14px;font-size:13px;color:var(--amber);font-family:var(--mono)">FloatChat removes every one of those steps.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · SOLUTION -->
+  <section class="slide">
+    <div class="wrap">
+      <div class="eyebrow">The solution</div>
+      <h2>One question in. Answer, map, chart, and the SQL out.</h2>
+      <div class="grid2" style="margin-top:22px">
+        <ul style="margin-top:0">
+          <li><i class="m"></i><span class="t"><b>Ask</b> in English or an Indian language — plain words, no software, no formats.</span></li>
+          <li><i class="m"></i><span class="t"><b>Grounded answer</b> — one plain sentence; every number comes from a real record.</span></li>
+          <li><i class="m"></i><span class="t"><b>See it</b> — floats on a live satellite map, a depth or time chart, a results table.</span></li>
+          <li><i class="m"></i><span class="t"><b>Trust it</b> — the exact SQL and the source WMO float IDs sit under every answer.</span></li>
+          <li><i class="m"></i><span class="t"><b>Follow up</b> — the AI suggests the next questions; save any query for later.</span></li>
+          <li><i class="m a"></i><span class="t"><b>Fisheries</b> — PFZ advisories, SST, chlorophyll — fishermen ask about fish, not databases.</span></li>
+        </ul>
+        <div class="card">
+          <div style="font-family:var(--mono);font-size:11px;color:var(--ink-faint);letter-spacing:.1em;text-transform:uppercase">The pipeline, in one line</div>
+          <p style="margin-top:14px;font-family:var(--mono);font-size:13px;line-height:1.8;color:var(--ink-dim)">ARGO NetCDF → cleaned <span style="color:var(--blue)">PostgreSQL + PostGIS</span> → <span style="color:var(--amber)">RAG</span> over the schema → <span style="color:var(--seafoam)">NL→SQL</span> → validate + run read-only → map + chart</p>
+          <div class="chips" style="margin-top:16px">
+            <span class="chip"><b>5</b> question types</span>
+            <span class="chip"><b>5</b> languages</span>
+            <span class="chip">verified vs gold</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · HOW IT WORKS -->
+  <section class="slide">
+    <div class="wrap">
+      <div class="eyebrow">How it works</div>
+      <h2>Your question becomes a safe query — in seven steps.</h2>
+      <div class="flow" aria-label="Pipeline diagram">
+        <svg viewBox="0 0 980 300" role="img">
+          <defs>
+            <marker id="a" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z" fill="#6f8ba3"/></marker>
+            <marker id="as" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z" fill="#38e3c6"/></marker>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#38e3c6"/><stop offset="1" stop-color="#79b6ff"/></linearGradient>
+          </defs>
+          <g font-family="'Bricolage Grotesque',sans-serif">
+            <rect x="20" y="18" width="200" height="60" rx="12" fill="rgba(12,32,50,.7)" stroke="#38e3c6" stroke-width="1.3"/>
+            <text x="120" y="44" text-anchor="middle" fill="#eaf5fb" font-size="16" font-weight="700">Frontend</text>
+            <text x="120" y="63" text-anchor="middle" fill="#6f8ba3" font-size="11" font-family="'JetBrains Mono',monospace">React · Leaflet · Plotly</text>
+            <line x1="220" y1="48" x2="290" y2="48" stroke="#6f8ba3" stroke-width="1.4" marker-end="url(#a)"/>
+            <text x="255" y="40" text-anchor="middle" fill="#a9c2d6" font-size="10" font-family="'JetBrains Mono',monospace">question</text>
+            <rect x="290" y="18" width="230" height="60" rx="12" fill="rgba(12,32,50,.7)" stroke="#38e3c6" stroke-width="1.3"/>
+            <text x="405" y="44" text-anchor="middle" fill="#eaf5fb" font-size="16" font-weight="700">FastAPI backend</text>
+            <text x="405" y="63" text-anchor="middle" fill="#6f8ba3" font-size="11" font-family="'JetBrains Mono',monospace">/chat · /floats · /health</text>
+            <line x1="405" y1="78" x2="405" y2="108" stroke="#6f8ba3" stroke-width="1.4" marker-end="url(#a)"/>
+            <rect x="40" y="112" width="900" height="86" rx="14" fill="none" stroke="rgba(120,170,205,.28)" stroke-width="1" stroke-dasharray="4 6"/>
+            <text x="56" y="107" fill="#f6bb52" font-size="11" font-family="'JetBrains Mono',monospace">the brain — question → safe SQL (LLM, or offline rule engine)</text>
+            <rect x="60" y="130" width="200" height="54" rx="11" fill="rgba(16,40,60,.7)" stroke="#f6bb52" stroke-width="1.2"/>
+            <text x="160" y="153" text-anchor="middle" fill="#eaf5fb" font-size="14" font-weight="700">Find context</text>
+            <text x="160" y="170" text-anchor="middle" fill="#6f8ba3" font-size="10.5" font-family="'JetBrains Mono',monospace">RAG · schema docs</text>
+            <line x1="260" y1="157" x2="308" y2="157" stroke="#6f8ba3" stroke-width="1.4" marker-end="url(#a)"/>
+            <rect x="310" y="130" width="190" height="54" rx="11" fill="rgba(16,40,60,.7)" stroke="#f6bb52" stroke-width="1.2"/>
+            <text x="405" y="153" text-anchor="middle" fill="#eaf5fb" font-size="14" font-weight="700">Write SQL</text>
+            <text x="405" y="170" text-anchor="middle" fill="#6f8ba3" font-size="10.5" font-family="'JetBrains Mono',monospace">LLM + rule engine</text>
+            <line x1="500" y1="157" x2="548" y2="157" stroke="#6f8ba3" stroke-width="1.4" marker-end="url(#a)"/>
+            <rect x="550" y="130" width="200" height="54" rx="11" fill="rgba(16,40,60,.7)" stroke="#f6bb52" stroke-width="1.2"/>
+            <text x="650" y="153" text-anchor="middle" fill="#eaf5fb" font-size="14" font-weight="700">Check it's safe</text>
+            <text x="650" y="170" text-anchor="middle" fill="#6f8ba3" font-size="10.5" font-family="'JetBrains Mono',monospace">sqlglot · read-only</text>
+            <line x1="750" y1="157" x2="798" y2="157" stroke="#6f8ba3" stroke-width="1.4" marker-end="url(#a)"/>
+            <rect x="800" y="130" width="120" height="54" rx="11" fill="rgba(16,40,60,.7)" stroke="#79b6ff" stroke-width="1.2"/>
+            <text x="860" y="153" text-anchor="middle" fill="#eaf5fb" font-size="14" font-weight="700">Run</text>
+            <text x="860" y="170" text-anchor="middle" fill="#6f8ba3" font-size="10.5" font-family="'JetBrains Mono',monospace">read-only</text>
+            <line x1="860" y1="198" x2="860" y2="228" stroke="#6f8ba3" stroke-width="1.4" marker-end="url(#a)"/>
+            <rect x="700" y="232" width="240" height="54" rx="12" fill="rgba(12,32,50,.7)" stroke="#79b6ff" stroke-width="1.3"/>
+            <text x="820" y="255" text-anchor="middle" fill="#eaf5fb" font-size="15" font-weight="700">PostgreSQL + PostGIS</text>
+            <text x="820" y="273" text-anchor="middle" fill="#6f8ba3" font-size="10.5" font-family="'JetBrains Mono',monospace">floats · profiles · measurements</text>
+            <rect x="60" y="232" width="235" height="54" rx="12" fill="rgba(12,32,50,.7)" stroke="#38e3c6" stroke-width="1.3"/>
+            <text x="177" y="255" text-anchor="middle" fill="#eaf5fb" font-size="14.5" font-weight="700">Answer · map · chart</text>
+            <text x="177" y="273" text-anchor="middle" fill="#6f8ba3" font-size="10.5" font-family="'JetBrains Mono',monospace">grounded · with the SQL</text>
+            <path d="M700 259 H 303" fill="none" stroke="#38e3c6" stroke-width="1.6" stroke-dasharray="6 5" marker-end="url(#as)" opacity=".92"/>
+            <text x="500" y="250" text-anchor="middle" fill="#38e3c6" font-size="10" font-family="'JetBrains Mono',monospace">results flow back</text>
+          </g>
+        </svg>
+      </div>
+      <p class="lead" style="margin-top:8px">Detect language → retrieve schema (RAG) → write SQL → validate → run read-only → shape map + chart → write the grounded sentence.</p>
+    </div>
+  </section>
+
+  <!-- 6b · INSIDE THE BRAIN (animated) -->
+  <section class="slide" data-brain>
+    <div class="wrap">
+      <div class="eyebrow">Inside the brain · live</div>
+      <h2>How a question becomes safe SQL.</h2>
+      <div class="bv">
+        <div class="bv-track">
+          <span class="bv-dot" id="bvdot"></span>
+          <div class="bv-stage" id="bvs0"><span class="num">01</span><div class="nm">Retrieve</div><small>RAG · schema</small></div>
+          <div class="bv-stage" id="bvs1"><span class="num">02</span><div class="nm">Assemble</div><small>prompt</small></div>
+          <div class="bv-stage" id="bvs2"><span class="num">03</span><div class="nm">Write SQL</div><small>LLM</small></div>
+          <div class="bv-stage" id="bvs3"><span class="num">04</span><div class="nm">Validate</div><small>sqlglot</small></div>
+          <div class="bv-stage" id="bvs4"><span class="num">05</span><div class="nm">Run</div><small>read-only</small></div>
+          <div class="bv-stage" id="bvs5"><span class="num">06</span><div class="nm">See</div><small>the result</small></div>
+        </div>
+        <div class="bv-cap" id="bvcap">Ask: <b>“Average salinity in the Arabian Sea in 2023, 0–200 m.”</b></div>
+        <div class="bv-detail" id="bvdetail"></div>
+        <div class="bv-ctrls bv-ctrl">
+          <button class="bv-btn bv-ctrl" id="bvprev" aria-label="Previous step">‹</button>
+          <button class="bv-btn play bv-ctrl" id="bvplay" aria-label="Play or pause"><span id="bvplayicon">▶</span><span id="bvplaytxt">Play</span></button>
+          <button class="bv-btn bv-ctrl" id="bvnext" aria-label="Next step">›</button>
+          <span class="bv-step bv-ctrl">Step <b id="bvstep">1</b> / 6</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · GROUNDED & SAFE -->
+  <section class="slide">
+    <div class="wrap">
+      <div class="eyebrow">Trust — the reason a scientist will believe it</div>
+      <h2>It never makes numbers up.</h2>
+      <div class="grid2" style="margin-top:20px">
+        <ul style="margin-top:0">
+          <li><i class="m"></i><span class="t"><b>Grounded</b> — every number is checked against the result set; nothing invented.</span></li>
+          <li><i class="m"></i><span class="t"><b>Single SELECT only</b> — <code>sqlglot</code> parses it; DDL/DML and stacked statements are rejected.</span></li>
+          <li><i class="m"></i><span class="t"><b>Table allow-list</b> + keyword denylist — only the four ARGO tables are reachable.</span></li>
+          <li><i class="m"></i><span class="t"><b>Read-only role</b> + 5-second statement timeout — the query can look, never touch.</span></li>
+          <li><i class="m"></i><span class="t"><b>Transparent</b> — the SQL and source float IDs are shown with every answer.</span></li>
+          <li><i class="m"></i><span class="t"><b>Offline-safe</b> — a rule engine answers the common questions if the AI is unavailable.</span></li>
+        </ul>
+        <div class="card">
+          <div style="font-family:var(--mono);font-size:11px;color:var(--ink-faint);letter-spacing:.12em;text-transform:uppercase">Data quality, at ingest</div>
+          <ul style="margin-top:12px;gap:10px">
+            <li><i class="m b"></i><span class="t">Keep only QC flags <b>1–2</b>; drop bad / missing readings.</span></li>
+            <li><i class="m b"></i><span class="t">Prefer <b>delayed-mode adjusted</b> values when their QC is good.</span></li>
+            <li><i class="m b"></i><span class="t">Convert pressure → true depth with <b>TEOS-10</b>.</span></li>
+            <li><i class="m b"></i><span class="t">Keep ascending profiles; tidy one row per level.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · PROVEN ON REAL DATA -->
+  <section class="slide">
+    <div class="wrap">
+      <div class="eyebrow">Not a mock-up — real data, running today</div>
+      <h2>Built on real ARGO floats, and it actually runs.</h2>
+      <div class="statgrid" style="margin-top:24px">
+        <div class="card"><div class="stat">12,442<span class="u">profiles</span></div><div class="statlbl">Indian Ocean · 2023</div></div>
+        <div class="card"><div class="stat">7.9<span class="u">M levels</span></div><div class="statlbl">temp · salinity · depth</div></div>
+        <div class="card"><div class="stat">5<span class="u">languages</span></div><div class="statlbl">verified end-to-end</div></div>
+        <div class="card"><div class="stat">36/36<span class="u">tests green</span></div><div class="statlbl">safety + accuracy</div></div>
+      </div>
+      <div class="chips" style="margin-top:22px">
+        <span class="chip"><b>Frontend</b> React · Leaflet · Plotly</span>
+        <span class="chip"><b>Backend</b> FastAPI · Postgres + PostGIS</span>
+        <span class="chip"><b>AI</b> LLM + RAG, with an offline rule engine</span>
+        <span class="chip"><b>Safety</b> sqlglot · read-only</span>
+        <span class="chip"><b>Fisheries</b> PFZ · SST · Chlorophyll</span>
+      </div>
+      <p class="note" style="margin-top:20px">Sourced from ARGO's official servers via <code>argopy</code> — the same INCOIS floats catalogued on <b>data.gov.in</b> — cleaned (QC 1–2, adjusted values, TEOS-10 depth) and pre-loaded so the demo runs with no network.</p>
+    </div>
+  </section>
+
+  <!-- 7 · FISHERIES -->
+  <section class="slide">
+    <div class="wrap">
+      <div class="eyebrow">Fisheries intelligence — built in</div>
+      <h2>The same engine, now for the people who fish.</h2>
+      <div class="grid2" style="margin-top:22px">
+        <div>
+          <ul style="margin-top:0">
+            <li><i class="m a"></i><span class="t"><b>Fishing zones (PFZ)</b> — derived from live satellite data with the INCOIS recipe, overlaid on the float map. Fishermen ask "where should I go?" and get a grounded answer.</span></li>
+            <li><i class="m a"></i><span class="t"><b>Satellite SST</b> — daily NOAA OISST sea-surface temperature. "Is the water warm enough for tuna near Kochi?" → a real answer with data.</span></li>
+            <li><i class="m a"></i><span class="t"><b>Chlorophyll / ocean colour</b> — daily NOAA VIIRS chlorophyll-a identifies plankton blooms and productive grounds (ISRO OCM archives too).</span></li>
+            <li><i class="m a"></i><span class="t"><b>Seasonal guide</b> — species-specific tips by monsoon season, backed by real observations.</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <div style="font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:.12em;text-transform:uppercase">From science to livelihoods</div>
+          <p style="margin-top:14px;font-size:15px;color:var(--ink-dim);line-height:1.5">
+            India has <b style="color:var(--ink)">4 million+ active fishermen</b>. INCOIS already issues PFZ advisories by SMS, but the raw data behind them is inaccessible.
+          </p>
+          <p style="margin-top:10px;font-size:13px;color:var(--ink-dim);line-height:1.5">
+            FloatChat makes this data <b style="color:var(--seafoam)">queryable in plain language</b> — ask about fish species, water temperature, chlorophyll levels, and fishing conditions near any Indian port.
+          </p>
+          <div class="chips" style="margin-top:14px">
+            <span class="chip"><b>PFZ</b> advisories</span>
+            <span class="chip"><b>SST</b> composites</span>
+            <span class="chip"><b>Chl-a</b> ocean colour</span>
+            <span class="chip"><b>Offline</b> ready</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · IMPACT / ROADMAP -->
+  <section class="slide">
+    <div class="wrap">
+      <div class="eyebrow">Why it matters — and where it goes</div>
+      <h2>From locked data to a question anyone can ask.</h2>
+      <div class="grid2" style="margin-top:20px">
+        <div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--seafoam);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px">Impact today</div>
+          <ul style="margin-top:0">
+            <li><i class="m"></i><span class="t">Scientists get answers in seconds instead of writing extraction code.</span></li>
+            <li><i class="m"></i><span class="t"><b>Fishermen</b> query PFZ, SST, and chlorophyll data in plain language — no specialist tools needed.</span></li>
+            <li><i class="m"></i><span class="t">Students, officers, and the public reach ocean data for the first time.</span></li>
+            <li><i class="m"></i><span class="t">Every answer is auditable — the SQL is right there.</span></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px">What's next</div>
+          <ul style="margin-top:0">
+            <li><i class="m a"></i><span class="t">SMS / WhatsApp interface for fishermen at sea.</span></li>
+            <li><i class="m a"></i><span class="t">BGC-Argo — oxygen, chlorophyll, nitrate from floats.</span></li>
+            <li><i class="m a"></i><span class="t">Live INCOIS ingestion — near real-time floats and PFZ.</span></li>
+            <li><i class="m a"></i><span class="t">Anomaly & marine-heatwave alerts; trajectory prediction.</span></li>
+            <li><i class="m a"></i><span class="t">Voice queries and more Indian languages.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 · CLOSE -->
+  <section class="slide">
+    <div class="hero">
+      <div class="bg"><img src="{{CLOSE}}" alt="Sunlit rays over a deep-sea floor"></div>
+      <div class="scrim"></div>
+      <div class="inner">
+        <div class="eyebrow" style="justify-content:center">Definition of done</div>
+        <h2 style="font-size:clamp(26px,4vw,48px)">Anyone can ask the ocean a question<br>and trust the answer.</h2>
+        <p class="tag" style="max-width:56ch">Plain-language question → validated, read-only query over real ARGO data and fisheries intelligence → a correct answer, a float map, a chart, and the exact SQL — in seconds, even offline.</p>
+        <p class="credit">FloatChat · democratising ocean data · from scientists to fishermen · thank you</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="count"><b id="cur">01</b> / <span id="tot">13</span></div>
+<div class="hint" id="hint">← / → or click to move</div>
+<div class="nav"><div class="dots" id="dots"></div><button class="arw" id="prev" aria-label="Previous slide">‹</button><button class="arw" id="next" aria-label="Next slide">›</button></div>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var n=slides.length,i=0;
+  var bar=document.getElementById('bar'),cur=document.getElementById('cur');
+  var dotsWrap=document.getElementById('dots'),prev=document.getElementById('prev'),next=document.getElementById('next'),hint=document.getElementById('hint');
+  document.getElementById('tot').textContent=String(n).padStart(2,'0');
+  slides.forEach(function(_,k){var b=document.createElement('button');b.className='dot';b.setAttribute('aria-label','Slide '+(k+1));b.addEventListener('click',function(){go(k)});dotsWrap.appendChild(b);});
+  var dots=[].slice.call(dotsWrap.children);
+  function go(k){i=Math.max(0,Math.min(n-1,k));
+    slides.forEach(function(s,x){s.classList.toggle('active',x===i)});
+    dots.forEach(function(d,x){d.classList.toggle('on',x===i)});
+    bar.style.width=((i)/(n-1)*100)+'%';cur.textContent=String(i+1).padStart(2,'0');
+    prev.disabled=i===0;next.disabled=i===n-1;if(i>0&&hint)hint.style.opacity='0';
+    brainSync();}
+  prev.addEventListener('click',function(){go(i-1)});next.addEventListener('click',function(){go(i+1)});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();go(i+1)}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(i-1)}
+    else if(e.key==='Home'){go(0)}else if(e.key==='End'){go(n-1)}});
+  document.getElementById('deck').addEventListener('click',function(e){
+    if(e.target.closest('.nav')||e.target.closest('a')||e.target.closest('.bv-ctrl'))return;
+    var x=e.clientX/window.innerWidth;if(x>0.62)go(i+1);else if(x<0.38)go(i-1);});
+
+  /* ---- inside-the-brain animation (manual + slow autoplay) ---- */
+  var bvOn=false, bvPlaying=false, bvIdx=0, bvTimers=[], bvAdvance=null, bvLast=5;
+  function bvT(fn,ms){var id=setTimeout(fn,ms);bvTimers.push(id);return id;}
+  function bvClearReveal(){bvTimers.forEach(clearTimeout);bvTimers=[];}
+  function bvCancelAdvance(){ if(bvAdvance){clearTimeout(bvAdvance);bvAdvance=null;} }
+  function stagger(nodes,gap){nodes.forEach(function(el,k){bvT(function(){el.classList.add('in');},k*gap);});}
+  var BSQL="SELECT AVG(m.salinity_psu) AS avg_salinity\nFROM measurements m\nJOIN profiles p ON p.profile_id = m.profile_id\nJOIN regions r ON r.name = 'Arabian Sea'\nWHERE ST_Covers(r.bbox, p.geom)\n  AND p.profile_time >= '2023-01-01'\n  AND m.depth_m BETWEEN 0 AND 200;";
+  function typewrite(text,el,total){
+    var idx=0, step=Math.max(20,Math.floor(total/text.length));
+    (function tick(){ if(!bvOn||!el)return; el.textContent=text.slice(0,idx); var c=document.createElement('span'); c.className='bv-cursor'; el.appendChild(c); idx++; if(idx<=text.length) bvT(tick,step); })();
+  }
+  var brenders=[
+    function(cap,det){ cap.innerHTML='<b>Retrieve (RAG).</b> The most relevant schema notes are pulled in first, so the model can only use real tables &amp; columns.'; det.innerHTML='<div class="bv-chips" id="bvx"></div>'; var host=det.querySelector('#bvx'); ['table: <b>profiles</b>','table: <b>measurements</b>','column: <b>salinity_psu</b>','column: <b>depth_m</b>','region: <b>Arabian Sea</b>','few-shot: avg-salinity example'].forEach(function(t){var s=document.createElement('span');s.className='bv-chip';s.innerHTML=t;host.appendChild(s);}); stagger([].slice.call(host.children),360); return 5200; },
+    function(cap,det){ cap.innerHTML='<b>Assemble the prompt.</b> Retrieved schema + your question + a few worked examples become one instruction.'; det.innerHTML='<div class="bv-chips" style="flex-direction:column;gap:8px" id="bvx"></div>'; var host=det.querySelector('#bvx'); ['<b>SCHEMA</b> — profiles, measurements, regions (only these)','<b>QUESTION</b> — average salinity in the Arabian Sea in 2023, 0–200 m','<b>FEW-SHOT</b> — 3 gold NL→SQL examples'].forEach(function(t){var s=document.createElement('span');s.className='bv-chip';s.style.display='block';s.innerHTML=t;host.appendChild(s);}); stagger([].slice.call(host.children),440); return 4600; },
+    function(cap,det){ cap.innerHTML='<b>Write SQL (LLM).</b> The model returns exactly one statement — grounded in the schema it was handed.'; det.innerHTML='<div class="bv-pre" id="bvpre"></div>'; typewrite(BSQL,det.querySelector('#bvpre'),4200); return 6400; },
+    function(cap,det){ cap.innerHTML='<b>Validate (sqlglot).</b> Parsed and gated before it can run — anything unsafe is rejected and retried once.'; det.innerHTML='<div class="bv-checks" id="bvx"></div>'; var host=det.querySelector('#bvx'); ['single SELECT statement','only allow-listed tables','no INSERT / UPDATE / DROP','LIMIT enforced'].forEach(function(t){var d=document.createElement('div');d.className='bv-check';d.innerHTML='<span class="ok">✓</span> '+t;host.appendChild(d);}); stagger([].slice.call(host.children),560); return 5200; },
+    function(cap,det){ cap.innerHTML='<b>Run read-only.</b> Executed on a SELECT-only role with a 5-second timeout; the answer uses only the rows returned.'; det.innerHTML='<div class="bv-rows" id="bvx"></div>'; var host=det.querySelector('#bvx'); ['avg_salinity   |   n_measurements','36.02   |   24,559'].forEach(function(t){var d=document.createElement('div');d.className='r';d.textContent=t;host.appendChild(d);}); stagger([].slice.call(host.children),620); return 4600; },
+    function(cap,det){ cap.innerHTML='<b>See the result.</b> Here is exactly what the user gets back for that question — grounded, and auditable.'; det.innerHTML='<div class="bv-result">'
+        +'<div class="bv-q bv-fade">“Average salinity in the Arabian Sea in 2023, 0–200 m.”</div>'
+        +'<div class="bv-a bv-fade"><b>The average salinity was 36.02 PSU</b> across 24,559 measurements.</div>'
+        +'<div class="bv-outs">'
+        +'<span class="o map bv-fade"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3zM9 3v15M15 6v15"/></svg>Map · 214 floats</span>'
+        +'<span class="o chart bv-fade"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 3v18h18M7 15l3-4 3 3 5-7"/></svg>Chart</span>'
+        +'<span class="o sql bv-fade"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13 6l-2 12"/></svg>SQL shown</span>'
+        +'</div></div>';
+      stagger([].slice.call(det.querySelectorAll('.bv-fade')),460); return 0; }
+  ];
+  function bvControls(){
+    var step=document.getElementById('bvstep'); if(step)step.textContent=(bvIdx+1);
+    var pi=document.getElementById('bvplayicon'), pt=document.getElementById('bvplaytxt');
+    var atEnd=(bvIdx>=bvLast)&&!bvPlaying;
+    if(pi)pi.textContent=bvPlaying?'❚❚':(atEnd?'↻':'▶');
+    if(pt)pt.textContent=bvPlaying?'Pause':(atEnd?'Replay':'Play');
+    var p=document.getElementById('bvprev'),nx=document.getElementById('bvnext');
+    if(p)p.disabled=bvIdx<=0; if(nx)nx.disabled=bvIdx>=bvLast;
+  }
+  function bvRender(idx){
+    for(var s=0;s<=bvLast;s++){var el=document.getElementById('bvs'+s);if(el){el.classList.remove('on');if(s<idx)el.classList.add('done');else el.classList.remove('done');}}
+    var cur=document.getElementById('bvs'+idx); if(cur){cur.classList.add('on'); var dot=document.getElementById('bvdot'); if(dot)dot.style.left=(cur.offsetLeft+cur.offsetWidth/2-6)+'px';}
+    return brenders[idx](document.getElementById('bvcap'),document.getElementById('bvdetail'));
+  }
+  function bvGoto(idx){
+    bvClearReveal(); bvCancelAdvance();
+    bvIdx=Math.max(0,Math.min(bvLast,idx));
+    var dur=bvRender(bvIdx);
+    if(bvPlaying){ if(bvIdx<bvLast){ bvAdvance=setTimeout(function(){bvGoto(bvIdx+1);},dur+700); } else { bvPlaying=false; } }
+    bvControls();
+  }
+  function bvSetPlaying(p){
+    bvPlaying=p;
+    if(p){ if(bvIdx>=bvLast) bvGoto(0); else bvGoto(bvIdx); }
+    else { bvCancelAdvance(); bvControls(); }
+  }
+  function bvResetView(){
+    bvCancelAdvance(); bvClearReveal();
+    for(var s=0;s<=bvLast;s++){var el=document.getElementById('bvs'+s);if(el){el.classList.remove('on');el.classList.remove('done');}}
+    var d=document.getElementById('bvdetail'); if(d)d.innerHTML='';
+    var c=document.getElementById('bvcap'); if(c)c.innerHTML='Ask: <b>“Average salinity in the Arabian Sea in 2023, 0–200 m.”</b>';
+    var dot=document.getElementById('bvdot'); if(dot)dot.style.left='0px';
+    bvIdx=0; bvControls();
+  }
+  (function bvWire(){
+    var p=document.getElementById('bvprev'),nx=document.getElementById('bvnext'),pl=document.getElementById('bvplay');
+    if(p)p.addEventListener('click',function(e){e.stopPropagation();bvSetPlaying(false);bvGoto(bvIdx-1);});
+    if(nx)nx.addEventListener('click',function(e){e.stopPropagation();bvSetPlaying(false);bvGoto(bvIdx+1);});
+    if(pl)pl.addEventListener('click',function(e){e.stopPropagation();bvSetPlaying(!bvPlaying);});
+  })();
+  function brainSync(){
+    var on=slides[i]&&slides[i].hasAttribute('data-brain');
+    if(on&&!bvOn){ bvOn=true; bvResetView(); bvSetPlaying(true); }
+    else if(!on&&bvOn){ bvOn=false; bvPlaying=false; bvResetView(); }
+  }
+
+  go(0);
+})();
+</script>

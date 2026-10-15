@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: floatchat-db
+    environment:
+      POSTGRES_DB: floatchat
+      POSTGRES_USER: floatchat_admin
+      POSTGRES_PASSWORD: floatchat
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./db/seed_regions.sql:/docker-entrypoint-initdb.d/02_seed_regions.sql:ro
+      - ./db/roles.sql:/docker-entrypoint-initdb.d/03_roles.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U floatchat_admin -d floatchat"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build: .
+    container_name: floatchat-api
+    profiles: ["full"]
+    environment:
+      DATABASE_URL: postgresql://floatchat_ro:floatchat_ro@db:5432/floatchat
+      DATABASE_URL_ADMIN: postgresql://floatchat_admin:floatchat@db:5432/floatchat
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

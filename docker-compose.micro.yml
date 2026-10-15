@@ -1,0 +1,61 @@
+# Stack for a 1 GB VM (Oracle Always Free VM.Standard.E2.1.Micro).
+# Same services as docker-compose.prod.yml, but the frontend is built on the
+# laptop (frontend/dist is copied up) and served by a stock Caddy image, so the
+# server never runs a Node build. Only the API image is built on the server.
+#   docker compose -f docker-compose.micro.yml up -d --build api
+#   docker compose -f docker-compose.micro.yml up -d
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: floatchat-db
+    restart: unless-stopped
+    command: >
+      postgres -c shared_buffers=96MB -c work_mem=4MB -c maintenance_work_mem=64MB
+               -c effective_cache_size=256MB -c max_connections=20
+    environment:
+      POSTGRES_DB: floatchat
+      POSTGRES_USER: floatchat_admin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-floatchat}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./db/seed_regions.sql:/docker-entrypoint-initdb.d/02_seed_regions.sql:ro
+      - ./db/roles.sql:/docker-entrypoint-initdb.d/03_roles.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U floatchat_admin -d floatchat"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: .
+    image: floatchat-api
+    container_name: floatchat-api
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://floatchat_ro:floatchat_ro@db:5432/floatchat
+      DATABASE_URL_ADMIN: postgresql://floatchat_admin:${POSTGRES_PASSWORD:-floatchat}@db:5432/floatchat
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    image: caddy:2-alpine
+    container_name: floatchat-web
+    restart: unless-stopped
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./frontend/dist:/srv:ro
+      - ./frontend/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  caddy_data:

@@ -1,0 +1,58 @@
+# Production stack for a single VM (e.g. an Oracle Cloud Always Free ARM instance).
+#   docker compose -f docker-compose.prod.yml up -d --build
+# See docs/Deploy-Oracle-Cloud.md for the full walkthrough.
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: floatchat-db
+    restart: unless-stopped
+    # Conservative memory settings so the stack also fits a 1 GB VM.
+    command: >
+      postgres -c shared_buffers=128MB -c work_mem=8MB -c maintenance_work_mem=64MB
+               -c effective_cache_size=384MB -c max_connections=20
+    environment:
+      POSTGRES_DB: floatchat
+      POSTGRES_USER: floatchat_admin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-floatchat}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./db/seed_regions.sql:/docker-entrypoint-initdb.d/02_seed_regions.sql:ro
+      - ./db/roles.sql:/docker-entrypoint-initdb.d/03_roles.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U floatchat_admin -d floatchat"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: .
+    image: floatchat-api
+    container_name: floatchat-api
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://floatchat_ro:floatchat_ro@db:5432/floatchat
+      DATABASE_URL_ADMIN: postgresql://floatchat_admin:${POSTGRES_PASSWORD:-floatchat}@db:5432/floatchat
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build: ./frontend
+    image: floatchat-web
+    container_name: floatchat-web
+    restart: unless-stopped
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  caddy_data:
