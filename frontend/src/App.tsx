@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { askQuestion } from "./api";
 import Chat from "./components/Chat";
+import DataLimitNotice from "./components/DataLimitNotice";
 import DataView from "./components/DataView";
 import FisheriesView from "./components/FisheriesView";
 import HowItWorks from "./components/HowItWorks";
@@ -120,6 +121,7 @@ export default function App() {
   return (
     <div className="flex h-full">
       {landing && <Landing leaving={leaving} onEnter={enterApp} />}
+      {!landing && <DataLimitNotice />}
       <Sidebar active={view === "how" ? "about" : nav} onSelect={onNav} theme={theme} onTheme={setTheme} />
 
       <div className="flex min-w-0 flex-1 flex-col">
