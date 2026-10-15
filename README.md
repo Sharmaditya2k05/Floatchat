@@ -17,6 +17,10 @@ Built on real **ARGO** ocean-float data · a **Fisheries** layer (INCOIS PFZ · 
 
 <sub>ANALYTICA 2026 · Problem PS26-033 · MoES / INCOIS</sub>
 
+**🌐 Live demo: <http://80.225.245.19>**
+
+<sub>Runs on an Oracle Cloud Always Free 1 GB VM, so only part of the ARGO archive is loaded (Indian Ocean, 2023) — the app shows a notice with the exact window on launch. Plain HTTP; no account needed.</sub>
+
 </div>
 
 ---
@@ -118,7 +122,7 @@ Loading the layer:
 .venv/Scripts/python -m ingest.fisheries --sst-from-argo   # add SST from the loaded ARGO profiles
 ```
 
-`ingest.fisheries_fetch` needs no account (`--days 30` for a longer window; re-runs replace the window). On the deployed server it runs automatically every night (`deploy/install_cron.sh`), so the satellite layer stays current on its own. `ingest.fisheries --csv-dir data/fisheries` loads INCOIS / ISRO exports (column layout documented in the module); `--demo` inserts clearly-labelled sample rows (`source = 'DEMO'`) for offline demos.
+`ingest.fisheries_fetch` needs no account (`--days 30` for a longer window; re-runs replace the window). It reads NOAA's `ncdcOisst21NrtAgg` (SST, 0–360° longitude) and `nesdisVHNSQchlaDaily` (chlorophyll) grids from CoastWatch ERDDAP. On the deployed server it runs automatically every night (`deploy/install_cron.sh`), so the satellite layer stays current on its own. `ingest.fisheries --csv-dir data/fisheries` loads INCOIS / ISRO exports (column layout documented in the module); `--demo` inserts clearly-labelled sample rows (`source = 'DEMO'`) for offline demos.
 
 ## 🛠️ Tech stack
 
@@ -151,7 +155,14 @@ Works fully **offline** with `LLM_PROVIDER=none` (the rule engine handles the co
 
 ## ☁️ Deploy
 
-One Oracle Cloud **Always Free** ARM VM runs the whole stack (`docker-compose.prod.yml`: PostGIS + API + Caddy). Step-by-step, from creating the account to shipping the database: **[Deploy on Oracle Cloud](docs/Deploy-Oracle-Cloud.md)**.
+One Oracle Cloud **Always Free** VM runs the whole stack with Docker Compose (PostGIS + API + Caddy). Two compose files, pick by VM size:
+
+| File | VM | How it builds |
+|---|---|---|
+| `docker-compose.prod.yml` | Ampere A1 (ARM, up to 24 GB) | everything built on the server (`up -d --build`) |
+| `docker-compose.micro.yml` | **`VM.Standard.E2.1.Micro` (1 GB)** — what the live demo runs on | frontend is built on your laptop (`npm run build`) and served by a stock Caddy image; only the API image builds on the server |
+
+Step-by-step, from creating the account to loading the data: **[Deploy on Oracle Cloud](docs/Deploy-Oracle-Cloud.md)**. On the 1 GB VM the ARGO data is loaded on the server itself with `ingest.build_db` (a few months at a time) rather than shipped as a dump, and `deploy/server_setup.sh` adds 4 GB of swap so Postgres and the API fit alongside each other.
 
 ## 📚 Learn more
 
@@ -167,10 +178,16 @@ rag/        schema_docs.py · examples.py (few-shot) · retriever.py (TF-IDF) ·
 ingest/     fetch.py (argopy) · transform.py (QC/adjusted/depth) · load.py (COPY) · build_db.py ·
             fisheries.py (PFZ / SST / chlorophyll loader)
 db/         schema.sql (ARGO + fisheries tables) · seed_regions.sql · roles.sql  (auto-applied on first run)
-frontend/   React + Vite + Tailwind + Leaflet + Plotly — landing, explore, fisheries, how-it-works, data
+frontend/   React + Vite + Tailwind + Leaflet + Plotly — landing, explore, fisheries, how-it-works, data,
+            data-limit notice (what the current server has loaded)
+deploy/     server_setup.sh (Docker + swap + firewall) · ship_images.sh · dump_db.sh / restore_db.sh ·
+            install_cron.sh + refresh_fisheries.sh (nightly NOAA refresh)
+docker-compose.yml        local dev (database only)
+docker-compose.prod.yml   single VM, ARM A1 (builds on the server)
+docker-compose.micro.yml  single 1 GB VM (frontend prebuilt on the laptop)
 tests/      SQL-safety · QC correctness · read-only execution · NL→SQL accuracy
-docs/       the Complete Guide + images
-presentation/  pitch deck (HTML) · speaker script (PDF) · final .pptx
+docs/       the Complete Guide · Deploy on Oracle Cloud · images
+presentation/  pitch deck (HTML) · project presentation (.pptx)
 ```
 
 <div align="center">

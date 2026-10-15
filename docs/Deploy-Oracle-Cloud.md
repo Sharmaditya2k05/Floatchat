@@ -30,7 +30,7 @@ The VM runs the whole stack with Docker Compose: PostGIS, the FastAPI backend, a
 - **Boot volume:** tick *Specify a custom boot volume size* → **100 GB**.
 - **Create.**
 
-> **"Out of host capacity"?** This is common for free A1 shapes. Try: another availability domain (AD-1/2/3) if your region has more than one; a smaller shape (1 OCPU / 6 GB also works); or simply retry a few times a day — capacity frees up. Do **not** switch to the AMD `E2.1.Micro` shape: 1 GB RAM is too small for the 8M-row database.
+> **"Out of host capacity"?** This is common for free A1 shapes. Try: another availability domain (AD-1/2/3) if your region has more than one; a smaller shape (1 OCPU / 6 GB also works); or simply retry a few times a day — capacity frees up. If A1 capacity never appears, the AMD `VM.Standard.E2.1.Micro` shape (1 GB RAM) also works with a few adjustments — see **[Running on the 1 GB E2.1.Micro shape](#running-on-the-1-gb-e21micro-shape)** below. The live demo runs on exactly that.
 
 ## 3 · Open ports 80 and 443 in the cloud firewall
 
@@ -168,6 +168,43 @@ ssh -i ~/.ssh/floatchat.key ubuntu@<VM_PUBLIC_IP> 'bash ~/FloatChat/deploy/refre
 ```
 
 Only the fisheries tables refresh; the ARGO float data is a fixed pilot window and still moves via dump/restore.
+
+---
+
+## Running on the 1 GB E2.1.Micro shape
+
+`VM.Standard.E2.1.Micro` (1 OCPU, 1 GB RAM, x86) is the shape Oracle always has capacity for. The stack fits, with three changes from the walkthrough above — this is how the live demo at <http://80.225.245.19> is deployed:
+
+1. **Never build the frontend on the server.** A Vite/Node build needs more than 1 GB. Build it on your laptop and copy the result up; `docker-compose.micro.yml` serves it with a stock Caddy image, so only the small API image is built on the VM.
+
+   ```bash
+   cd frontend && npm ci && npm run build && cd ..
+   tar --exclude=frontend/node_modules -czf /tmp/floatchat.tgz Dockerfile .dockerignore requirements.txt docker-compose.micro.yml app rag ingest db deploy frontend/dist frontend/Caddyfile
+   scp -i ~/.ssh/floatchat.key /tmp/floatchat.tgz ubuntu@<VM_PUBLIC_IP>:/tmp/
+   ssh -i ~/.ssh/floatchat.key ubuntu@<VM_PUBLIC_IP> 'mkdir -p ~/FloatChat && tar -xzf /tmp/floatchat.tgz -C ~/FloatChat'
+   ```
+
+   Then on the VM, after creating `.env` as in step 6:
+
+   ```bash
+   cd ~/FloatChat && docker compose -f docker-compose.micro.yml build api && docker compose -f docker-compose.micro.yml up -d
+   ```
+
+   Use `-f docker-compose.micro.yml` in place of `docker-compose.prod.yml` in every later command (restarts, `exec`, cron). `deploy/refresh_fisheries.sh` works unchanged because both files share the same project name and container names.
+
+2. **Load the data on the server instead of shipping a dump.** With no local Docker there is nothing to `pg_dump`, so run the ingest inside the API container, a few months at a time (each 3-month window of the Indian Ocean takes ~10 minutes and ~200 MB):
+
+   ```bash
+   docker compose -f docker-compose.micro.yml exec -T api python -m ingest.fisheries_fetch --days 14
+   docker compose -f docker-compose.micro.yml exec -T api python -m ingest.build_db --start 2023-10-01 --end 2023-12-31
+   docker exec floatchat-db psql -U floatchat_admin -d floatchat -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO floatchat_ro;"
+   ```
+
+   Run a long load under `nohup … &` so an SSH drop doesn't kill it. The 4 GB swap file from `server_setup.sh` is what keeps Postgres + the ingest alive at 1 GB; expect ~200 MB of RAM free while a load runs.
+
+3. **Tell users what's loaded.** The frontend shows a one-time notice (`DataLimitNotice.tsx`) with the loaded ARGO date range, read live from `/api/data/overview`, so questions outside the window don't look like bugs.
+
+Memory headroom on this shape is small: `docker-compose.micro.yml` runs Postgres with `shared_buffers=96MB`, `work_mem=4MB` and 20 connections. Full 2019–2023 ARGO (≈40 M measurements) will not fit comfortably; one year is a sensible ceiling.
 
 ---
 
